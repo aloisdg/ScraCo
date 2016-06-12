@@ -51,13 +51,15 @@ namespace ScraCo {
         }
 
         private static bool TryParse(string hexastring, out string color) {
+            Func<string, string> unsharp = s => s.StartsWith ("#") ? s.Substring (1) : s;
+            Func<char, bool> isHex = c => (c < '0' || c > '9') && (c < 'a' || c > 'f');
+
             if (string.IsNullOrEmpty (hexastring)) {
                 color = null;
                 return false;
             }
-            var chars = hexastring.StartsWith ("#") ? hexastring.Substring (1) : hexastring;
-            if (chars.Length != 6 || chars.ToCharArray ()
-                .Any (c => (c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F'))) {
+            var chars = unsharp (hexastring).ToLowerInvariant ();
+            if (chars.Length != 6 || chars.ToCharArray ().Any (isHex)) {
                 color = null;
                 return false;
             }
